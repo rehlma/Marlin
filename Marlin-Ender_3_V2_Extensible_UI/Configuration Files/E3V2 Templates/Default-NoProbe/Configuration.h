@@ -21,6 +21,7 @@
  */
 #pragma once
 
+
 /**
  * Configuration.h
  *
@@ -69,7 +70,7 @@
 // @section info
 
 // Author info of this build printed to the host during boot and M115
-#define STRING_CONFIG_H_AUTHOR "L.Christophe" // Who made the changes.
+#define STRING_CONFIG_H_AUTHOR "Jacob Myers" // Who made the changes.
 //#define CUSTOM_VERSION_FILE Version.h // Path from the root directory (no quotes)
 
 /**
@@ -109,7 +110,7 @@
  * Currently Ethernet (-2) is only supported on Teensy 4.1 boards.
  * :[-2, -1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
-//#define SERIAL_PORT_2 2
+//#define SERIAL_PORT_2 -1
 
 /**
  * This setting determines the communication speed of the printer.
@@ -120,8 +121,7 @@
  *
  * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
  */
-#define BAUDRATE 250000
-#define LCD_BAUDRATE 115200
+#define BAUDRATE 115200
 
 // Enable the Bluetooth serial interface on AT90USB devices
 //#define BLUETOOTH
@@ -129,11 +129,10 @@
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
   #define MOTHERBOARD BOARD_CREALITY_V4
-  //#define MOTHERBOARD BOARD_CREALITY_V427
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "Ender-3 V2-BLTouch"
+#define CUSTOM_MACHINE_NAME "Ender-3 V2"
 
 // Printer's unique ID, used by some programs to differentiate between machines.
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
@@ -552,8 +551,7 @@
   //#define MIN_BED_POWER 0
   //#define PID_BED_DEBUG // Sends debug data to the serial port.
 
- // Ender 3 V2
-
+  // Ender 3 V2
   #define DEFAULT_bedKp 462.10
   #define DEFAULT_bedKi  85.47
   #define DEFAULT_bedKd 624.59
@@ -696,7 +694,7 @@
   //#define ENDSTOPPULLUP_XMIN
   //#define ENDSTOPPULLUP_YMIN
   //#define ENDSTOPPULLUP_ZMIN
-  #define ENDSTOPPULLUP_ZMIN_PROBE
+  //#define ENDSTOPPULLUP_ZMIN_PROBE
 #endif
 
 // Enable pulldown for all endstops to prevent a floating state
@@ -802,14 +800,14 @@
  * Override with M92
  *                                      X, Y, Z, E0 [, E1[, E2...]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 140 }
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 93 }
 
 /**
  * Default Max Feed Rate (mm/s)
  * Override with M203
  *                                      X, Y, Z, E0 [, E1[, E2...]]
  */
-#define DEFAULT_MAX_FEEDRATE          { 500, 500, 5, 80 }
+#define DEFAULT_MAX_FEEDRATE          { 500, 500, 5, 25 }
 
 //#define LIMITED_MAX_FR_EDITING        // Limit edit via M203 or LCD to DEFAULT_MAX_FEEDRATE * 2
 #if ENABLED(LIMITED_MAX_FR_EDITING)
@@ -902,7 +900,7 @@
  * The probe replaces the Z-MIN endstop and is used for Z homing.
  * (Automatically enables USE_PROBE_FOR_Z_HOMING.)
  */
-#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN
+//#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN
 
 // Force the use of the probe for Z-axis homing
 //#define USE_PROBE_FOR_Z_HOMING
@@ -922,7 +920,7 @@
  *      - normally-closed switches to GND and D32.
  *      - normally-open switches to 5V and D32.
  */
-//#define Z_MIN_PROBE_PIN Z_PROBE_PIN // Pin 32 is the RAMPS default
+//#define Z_MIN_PROBE_PIN 32 // Pin 32 is the RAMPS default
 
 /**
  * Probe Type
@@ -935,7 +933,6 @@
  * The "Manual Probe" provides a means to do "Auto" Bed Leveling without a probe.
  * Use G29 repeatedly, adjusting the Z height at each point with movement commands
  * or (with LCD_BED_LEVELING) the LCD controller.
- * (Do not enable this for manual EXT-UI UBL!)
  */
 //#define PROBE_MANUALLY
 //#define MANUAL_PROBE_START_Z 0.2
@@ -967,7 +964,7 @@
 /**
  * The BLTouch probe uses a Hall effect sensor and emulates a servo.
  */
-#define BLTOUCH
+//#define BLTOUCH
 
 /**
  * Touch-MI Probe by hotends.fr
@@ -1059,15 +1056,14 @@
  *     |    [-]    |
  *     O-- FRONT --+
  */
-#define NOZZLE_TO_PROBE_OFFSET { -40, -7, 0 }
-//#define NOZZLE_TO_PROBE_OFFSET {  38.5, 0, 0 } //Bondtech BMG Bltouch
+#define NOZZLE_TO_PROBE_OFFSET { 0, 0, 0 }
 
 // Most probes should stay away from the edges of the bed, but
 // with NOZZLE_AS_PROBE this can be negative for a wider probing area.
 #define PROBING_MARGIN 15
 
 // X and Y axis travel speed (mm/min) between probes
-#define XY_PROBE_FEEDRATE 9000
+#define XY_PROBE_FEEDRATE (133*60)
 
 // Feedrate (mm/min) for the first approach when double-probing (MULTIPLE_PROBING == 2)
 #define Z_PROBE_FEEDRATE_FAST (4*60)
@@ -1111,7 +1107,7 @@
  * A total of 2 does fast/slow probes with a weighted average.
  * A total of 3 or more adds more slow probes, taking the average.
  */
-#define MULTIPLE_PROBING 2
+//#define MULTIPLE_PROBING 2
 //#define EXTRA_PROBING    1
 
 /**
@@ -1140,7 +1136,7 @@
 #define Z_PROBE_OFFSET_RANGE_MAX 10
 
 // Enable the M48 repeatability test to test probe accuracy
-#define Z_MIN_PROBE_REPEATABILITY_TEST
+//#define Z_MIN_PROBE_REPEATABILITY_TEST
 
 // Before deploy/stow pause for user confirmation
 //#define PAUSE_BEFORE_DEPLOY_STOW
@@ -1162,7 +1158,7 @@
 #endif
 //#define PROBING_FANS_OFF          // Turn fans off when probing
 //#define PROBING_STEPPERS_OFF      // Turn steppers off (unless needed to hold position) when probing
-#define DELAY_BEFORE_PROBING 100  // (ms) To prevent vibrations from triggering piezo sensors
+//#define DELAY_BEFORE_PROBING 200  // (ms) To prevent vibrations from triggering piezo sensors
 
 // Require minimum nozzle and/or bed temperature for probing
 //#define PREHEAT_BEFORE_PROBING
@@ -1244,7 +1240,7 @@
 #define X_MIN_POS 0
 #define Y_MIN_POS 0
 #define Z_MIN_POS 0
-#define X_MAX_POS (X_BED_SIZE + 19)
+#define X_MAX_POS X_BED_SIZE
 #define Y_MAX_POS Y_BED_SIZE
 #define Z_MAX_POS 250
 
@@ -1262,7 +1258,7 @@
 #if ENABLED(MIN_SOFTWARE_ENDSTOPS)
   #define MIN_SOFTWARE_ENDSTOP_X
   #define MIN_SOFTWARE_ENDSTOP_Y
-  //#define MIN_SOFTWARE_ENDSTOP_Z
+  #define MIN_SOFTWARE_ENDSTOP_Z
 #endif
 
 // Max software endstops constrain movement within maximum coordinate bounds
@@ -1392,7 +1388,7 @@
  */
 //#define AUTO_BED_LEVELING_3POINT
 //#define AUTO_BED_LEVELING_LINEAR
-#define AUTO_BED_LEVELING_BILINEAR
+//#define AUTO_BED_LEVELING_BILINEAR
 //#define AUTO_BED_LEVELING_UBL
 //#define MESH_BED_LEVELING
 
@@ -1401,16 +1397,16 @@
  * these options to restore the prior leveling state or to always enable
  * leveling immediately after G28.
  */
-#define RESTORE_LEVELING_AFTER_G28
+//#define RESTORE_LEVELING_AFTER_G28
 //#define ENABLE_LEVELING_AFTER_G28
 
 /**
  * Auto-leveling needs preheating
  */
-#define PREHEAT_BEFORE_LEVELING
+//#define PREHEAT_BEFORE_LEVELING
 #if ENABLED(PREHEAT_BEFORE_LEVELING)
   #define LEVELING_NOZZLE_TEMP 120   // (°C) Only applies to E0 at this time
-  #define LEVELING_BED_TEMP     60
+  #define LEVELING_BED_TEMP     50
 #endif
 
 /**
@@ -1441,11 +1437,10 @@
   //#define G26_MESH_VALIDATION
   #if ENABLED(G26_MESH_VALIDATION)
     #define MESH_TEST_NOZZLE_SIZE    0.4  // (mm) Diameter of primary nozzle.
-    #define MESH_TEST_LAYER_HEIGHT   0.2  // (mm) Default layer height for G26.
-    #define MESH_TEST_HOTEND_TEMP  205    // (°C) Default nozzle temperature for G26.
-    #define MESH_TEST_BED_TEMP      60    // (°C) Default bed temperature for G26.
-    #define G26_XY_FEEDRATE         20    // (mm/s) Feedrate for G26 XY moves.
-    #define G26_XY_FEEDRATE_TRAVEL 100    // (mm/s) Feedrate for G26 XY travel moves.
+    #define MESH_TEST_LAYER_HEIGHT   0.2  // (mm) Default layer height for the G26 Mesh Validation Tool.
+    #define MESH_TEST_HOTEND_TEMP  205    // (°C) Default nozzle temperature for the G26 Mesh Validation Tool.
+    #define MESH_TEST_BED_TEMP      60    // (°C) Default bed temperature for the G26 Mesh Validation Tool.
+    #define G26_XY_FEEDRATE         20    // (mm/s) Feedrate for XY Moves for the G26 Mesh Validation Tool.
     #define G26_RETRACT_MULTIPLIER   1.0  // G26 Q (retraction) used by default between mesh test elements.
   #endif
 
@@ -1454,7 +1449,7 @@
 #if EITHER(AUTO_BED_LEVELING_LINEAR, AUTO_BED_LEVELING_BILINEAR)
 
   // Set the number of grid points per dimension.
-  #define GRID_MAX_POINTS_X 5
+  #define GRID_MAX_POINTS_X 3
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
 
   // Probe along the Y axis, advancing X after each column
@@ -1486,16 +1481,14 @@
 
   //#define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh
 
-  #define MESH_INSET 10              // Set Mesh bounds as an inset region of the bed
+  #define MESH_INSET 1              // Set Mesh bounds as an inset region of the bed
   #define GRID_MAX_POINTS_X 10      // Don't use more than 15 points per axis, implementation limited.
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
 
   //#define UBL_HILBERT_CURVE       // Use Hilbert distribution for less travel when probing multiple points
 
   #define UBL_MESH_EDIT_MOVES_Z     // Sophisticated users prefer no movement of nozzle
-  //#define UBL_SAVE_ACTIVE_ON_M500   // Save the currently active mesh in the current slot on M500
-  //  !NB! Do not uncomment UBL_SAVE_ACTIVE_ON_M500 otherwise using the tilt command 'G29 J' 
-  //  (e.g. from the auto-level menu item) can end up overwriting your original mesh with a tilted one!
+  #define UBL_SAVE_ACTIVE_ON_M500   // Save the currently active mesh in the current slot on M500
 
   //#define UBL_Z_RAISE_WHEN_OFF_MESH 2.5 // When the nozzle is off the mesh, this value is used
                                           // as the Z-Height correction value.
@@ -1533,32 +1526,13 @@
   #define LEVEL_CORNERS_INSET_LFRB { 30, 30, 30, 30 } // (mm) Left, Front, Right, Back insets
   #define LEVEL_CORNERS_HEIGHT      0.0   // (mm) Z height of nozzle at leveling points
   #define LEVEL_CORNERS_Z_HOP       4.0   // (mm) Z height of nozzle between leveling points
-  #define LEVEL_CENTER_TOO              // Move to the center after the last corner
+  //#define LEVEL_CENTER_TOO              // Move to the center after the last corner
   //#define LEVEL_CORNERS_USE_PROBE
   #if ENABLED(LEVEL_CORNERS_USE_PROBE)
     #define LEVEL_CORNERS_PROBE_TOLERANCE 0.1
     #define LEVEL_CORNERS_VERIFY_RAISED   // After adjustment triggers the probe, re-probe to verify
     //#define LEVEL_CORNERS_AUDIO_FEEDBACK
   #endif
-
-  /**
-   * Corner Leveling Order
-   *
-   * Set 2 or 4 points. When 2 points are given, the 3rd is the center of the opposite edge.
-   *
-   *  LF  Left-Front    RF  Right-Front
-   *  LB  Left-Back     RB  Right-Back
-   *
-   * Examples:
-   *
-   *      Default        {LF,RB,LB,RF}         {LF,RF}           {LB,LF}
-   *  LB --------- RB   LB --------- RB    LB --------- RB   LB --------- RB
-   *  |  4       3  |   | 3         2 |    |     <3>     |   | 1           |
-   *  |             |   |             |    |             |   |          <3>|
-   *  |  1       2  |   | 1         4 |    | 1         2 |   | 2           |
-   *  LF --------- RF   LF --------- RF    LF --------- RF   LF --------- RF
-   */
-  #define LEVEL_CORNERS_LEVELING_ORDER { LF, RF, RB, LB }
 #endif
 
 /**
@@ -1587,11 +1561,11 @@
 // - Move the Z probe (or nozzle) to a defined XY point before Z Homing.
 // - Prevent Z homing when the Z probe is outside bed area.
 //
-#define Z_SAFE_HOMING
+//#define Z_SAFE_HOMING
 
 #if ENABLED(Z_SAFE_HOMING)
-  #define Z_SAFE_HOMING_X_POINT ((X_BED_SIZE - 10) / 2)  // X point for Z homing
-  #define Z_SAFE_HOMING_Y_POINT ((Y_BED_SIZE - 10) / 2)  // Y point for Z homing
+  #define Z_SAFE_HOMING_X_POINT ((X_BED_SIZE - 10) / 2)    // X point for Z homing
+  #define Z_SAFE_HOMING_Y_POINT ((Y_BED_SIZE - 10) / 2)    // Y point for Z homing
 #endif
 
 // Homing speeds (mm/min)
@@ -1702,28 +1676,26 @@
 
 // @section temperature
 
-//
-// Preheat Constants - Up to 5 are supported without changes
-//
+// Preheat Constants
 #define PREHEAT_1_LABEL       "Warmup"
-#define PREHEAT_1_TEMP_HOTEND 180
-#define PREHEAT_1_TEMP_BED     50
-#define PREHEAT_1_FAN_SPEED     0 // Value from 0 to 255
+#define PREHEAT_1_TEMP_HOTEND 150
+#define PREHEAT_1_TEMP_BED     45
+#define PREHEAT_1_FAN_SPEED   255 // Value from 0 to 255
 
 #define PREHEAT_2_LABEL       "PLA"
-#define PREHEAT_2_TEMP_HOTEND 200
-#define PREHEAT_2_TEMP_BED     60
-#define PREHEAT_2_FAN_SPEED     0 // Value from 0 to 255
+#define PREHEAT_2_TEMP_HOTEND 190
+#define PREHEAT_2_TEMP_BED     55
+#define PREHEAT_2_FAN_SPEED   255 // Value from 0 to 255
 
 #define PREHEAT_3_LABEL       "ABS"
-#define PREHEAT_3_TEMP_HOTEND 245
-#define PREHEAT_3_TEMP_BED     90
-#define PREHEAT_3_FAN_SPEED     0 // Value from 0 to 255
+#define PREHEAT_3_TEMP_HOTEND 240
+#define PREHEAT_3_TEMP_BED     70
+#define PREHEAT_3_FAN_SPEED   255 // Value from 0 to 255
 
 #define PREHEAT_4_LABEL       "PETG"
-#define PREHEAT_4_TEMP_HOTEND 235
-#define PREHEAT_4_TEMP_BED     80
-#define PREHEAT_4_FAN_SPEED     0 // Value from 0 to 255
+#define PREHEAT_4_TEMP_HOTEND 240
+#define PREHEAT_4_TEMP_BED     70
+#define PREHEAT_4_FAN_SPEED   255 // Value from 0 to 255
 
 /**
  * Nozzle Park
@@ -1854,9 +1826,6 @@
  * View the current statistics with M78.
  */
 //#define PRINTCOUNTER
-#if ENABLED(PRINTCOUNTER)
-  #define PRINTCOUNTER_SAVE_INTERVAL 60 // (minutes) EEPROM save interval during print
-#endif
 
 /**
  * Password
@@ -1901,9 +1870,9 @@
  * Select the language to display on the LCD. These languages are available:
  *
  *   en, an, bg, ca, cz, da, de, el, el_gr, es, eu, fi, fr, gl, hr, hu, it,
- *   jp_kana, ko_KR, nl, pl, pt, pt_br, ro, ru, sk, sv, tr, uk, vi, zh_CN, zh_TW
+ *   jp_kana, ko_KR, nl, pl, pt, pt_br, ro, ru, sk, tr, uk, vi, zh_CN, zh_TW, test
  *
- * :{ 'en':'English', 'an':'Aragonese', 'bg':'Bulgarian', 'ca':'Catalan', 'cz':'Czech', 'da':'Danish', 'de':'German', 'el':'Greek', 'el_gr':'Greek (Greece)', 'es':'Spanish', 'eu':'Basque-Euskera', 'fi':'Finnish', 'fr':'French', 'gl':'Galician', 'hr':'Croatian', 'hu':'Hungarian', 'it':'Italian', 'jp_kana':'Japanese', 'ko_KR':'Korean (South Korea)', 'nl':'Dutch', 'pl':'Polish', 'pt':'Portuguese', 'pt_br':'Portuguese (Brazilian)', 'ro':'Romanian', 'ru':'Russian', 'sk':'Slovak', 'sv':'Swedish', 'tr':'Turkish', 'uk':'Ukrainian', 'vi':'Vietnamese', 'zh_CN':'Chinese (Simplified)', 'zh_TW':'Chinese (Traditional)' }
+ * :{ 'en':'English', 'an':'Aragonese', 'bg':'Bulgarian', 'ca':'Catalan', 'cz':'Czech', 'da':'Danish', 'de':'German', 'el':'Greek', 'el_gr':'Greek (Greece)', 'es':'Spanish', 'eu':'Basque-Euskera', 'fi':'Finnish', 'fr':'French', 'gl':'Galician', 'hr':'Croatian', 'hu':'Hungarian', 'it':'Italian', 'jp_kana':'Japanese', 'ko_KR':'Korean (South Korea)', 'nl':'Dutch', 'pl':'Polish', 'pt':'Portuguese', 'pt_br':'Portuguese (Brazilian)', 'ro':'Romanian', 'ru':'Russian', 'sk':'Slovak', 'tr':'Turkish', 'uk':'Ukrainian', 'vi':'Vietnamese', 'zh_CN':'Chinese (Simplified)', 'zh_TW':'Chinese (Traditional)', 'test':'TEST' }
  */
 #define LCD_LANGUAGE en
 
@@ -1945,7 +1914,6 @@
  * you must uncomment the following option or it won't work.
  */
 #define SDSUPPORT
-#define SDIO_SUPPORT
 
 /**
  * SD CARD: ENABLE CRC
@@ -2348,7 +2316,7 @@
 //#define OLED_PANEL_TINYBOY2
 
 //
-// MKS OLED 1.3" 128×64 FULL GRAPHICS CONTROLLER
+// MKS OLED 1.3" 128×64 Full Graphics Controller
 // https://reprap.org/wiki/MKS_12864OLED
 //
 // Tiny, but very sharp OLED display
@@ -2357,7 +2325,7 @@
 //#define MKS_12864OLED_SSD1306  // Uses the SSD1306 controller
 
 //
-// Zonestar OLED 128×64 FULL GRAPHICS CONTROLLER
+// Zonestar OLED 128×64 Full Graphics Controller
 //
 //#define ZONESTAR_12864LCD           // Graphical (DOGM) with ST7920 controller
 //#define ZONESTAR_12864OLED          // 1.3" OLED with SH1106 controller (default)
@@ -2374,7 +2342,7 @@
 //#define OVERLORD_OLED
 
 //
-// FYSETC OLED 2.42" 128×64 FULL GRAPHICS CONTROLLER with WS2812 RGB
+// FYSETC OLED 2.42" 128×64 Full Graphics Controller with WS2812 RGB
 // Where to find : https://www.aliexpress.com/item/4000345255731.html
 //#define FYSETC_242_OLED_12864   // Uses the SSD1309 controller
 
@@ -2411,7 +2379,7 @@
   // Enable custom icons
   // NB: Requires Ender-3 v2 OEM display firmware update, or you will get blank icons!
   //
-  #define CREALITY_DWIN_EXTUI_CUSTOM_ICONS
+  //#define CREALITY_DWIN_EXTUI_CUSTOM_ICONS
 #endif
 
 //
@@ -2563,9 +2531,6 @@
 //#define TFT_COLOR_UI
 //#define TFT_LVGL_UI
 
-#if ENABLED(TFT_LVGL_UI)
-  //#define MKS_WIFI_MODULE  // MKS WiFi module
-#endif
 /**
  * TFT Rotation. Set to one of the following values:
  *
@@ -2600,10 +2565,6 @@
   //#define TOUCH_OFFSET_X        -43
   //#define TOUCH_OFFSET_Y        257
   //#define TOUCH_ORIENTATION TOUCH_LANDSCAPE
-
-  #if BOTH(TOUCH_SCREEN_CALIBRATION, EEPROM_SETTINGS)
-    #define TOUCH_CALIBRATION_AUTO_SAVE // Auto save successful calibration values to EEPROM
-  #endif
 
   #if ENABLED(TFT_COLOR_UI)
     //#define SINGLE_TOUCH_NAVIGATION
@@ -2757,4 +2718,4 @@
 //#define DEACTIVATE_SERVOS_AFTER_MOVE
 
 // Edit servo angles with M281 and save to EEPROM with M500
-#define EDITABLE_SERVO_ANGLES
+//#define EDITABLE_SERVO_ANGLES

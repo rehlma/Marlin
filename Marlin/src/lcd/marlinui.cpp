@@ -75,6 +75,17 @@ constexpr uint8_t epps = ENCODER_PULSES_PER_STEP;
   #else
     constexpr uint8_t MAX_MESSAGE_LENGTH = 63;
   #endif
+
+  #if ENABLED(CREALITY_DWIN_EXTUI)
+  #include "extui/lib/creality_dwin/dwin.h"
+  uint8_t MarlinUI::brightness = DEFAULT_LCD_BRIGHTNESS;
+
+  void MarlinUI::set_brightness(const uint8_t value) {
+    brightness = constrain(value, MIN_LCD_BRIGHTNESS, MAX_LCD_BRIGHTNESS);
+    DWIN_Backlight_SetLuminance(brightness);
+  }
+  #endif
+  
   char MarlinUI::status_message[MAX_MESSAGE_LENGTH + 1];
   uint8_t MarlinUI::alert_level; // = 0
 #endif

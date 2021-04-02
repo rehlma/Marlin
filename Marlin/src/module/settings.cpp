@@ -341,6 +341,12 @@ typedef struct SettingsDataStruct {
   int16_t lcd_contrast;                                 // M250 C
 
   //
+  // HAS_LCD_BRIGHTNESS
+  //
+  uint8_t lcd_brightness;                                 // M251 B
+
+  
+  //
   // Controller fan settings
   //
   controllerFan_settings_t controllerFan_settings;      // M710
@@ -980,6 +986,22 @@ void MarlinSettings::postprocess() {
         #endif
       ;
       EEPROM_WRITE(lcd_contrast);
+    }
+
+    //
+    // LCD Brightness
+    //
+    {
+      _FIELD_TEST(lcd_brightness);
+
+      const uint8_t lcd_brightness =
+        #if ENABLED(CREALITY_DWIN_EXTUI)
+          ui.brightness
+        #else
+          255
+        #endif
+      ;
+      EEPROM_WRITE(lcd_brightness);
     }
 
     //
@@ -1850,6 +1872,20 @@ void MarlinSettings::postprocess() {
         EEPROM_READ(lcd_contrast);
         if (!validating) {
           TERN_(HAS_LCD_CONTRAST, ui.set_contrast(lcd_contrast));
+        }
+      }
+
+      //
+      // LCD Brightness
+      //
+      {
+        _FIELD_TEST(lcd_brightness);
+        uint8_t lcd_brightness;
+        EEPROM_READ(lcd_brightness);
+        if (!validating) {
+          #if ENABLED(CREALITY_DWIN_EXTUI)
+            ui.set_brightness(lcd_brightness);
+          #endif
         }
       }
 
@@ -2868,6 +2904,14 @@ void MarlinSettings::reset() {
   TERN_(HAS_LCD_CONTRAST, ui.set_contrast(DEFAULT_LCD_CONTRAST));
 
   //
+  // LCD Brightness
+  //
+
+  #if ENABLED(CREALITY_DWIN_EXTUI)
+    ui.set_brightness(DEFAULT_LCD_BRIGHTNESS);
+  #endif
+  
+  //
   // Controller Fan
   //
   TERN_(USE_CONTROLLER_FAN, controllerFan.reset());
@@ -3447,6 +3491,11 @@ void MarlinSettings::reset() {
     #if HAS_LCD_CONTRAST
       CONFIG_ECHO_HEADING("LCD Contrast:");
       CONFIG_ECHO_MSG("  M250 C", ui.contrast);
+    #endif
+
+    #if HAS_LCD_BRIGHTNESS
+      CONFIG_ECHO_HEADING("LCD Brightness:");
+      CONFIG_ECHO_MSG("  M251 B", ui.brightness);
     #endif
 
     TERN_(CONTROLLER_FAN_EDITABLE, M710_report(forReplay));

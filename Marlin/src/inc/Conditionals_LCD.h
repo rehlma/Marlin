@@ -663,6 +663,9 @@
   #ifndef LCD_SERIAL_PORT
     #define LCD_SERIAL_PORT 3 // Creality 4.x board
   #endif
+  #define MAX_LCD_BRIGHTNESS  255
+  #define MIN_LCD_BRIGHTNESS  0
+  #define DEFAULT_LCD_BRIGHTNESS 255
 #endif
 
 /**

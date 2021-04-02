@@ -21,6 +21,7 @@
  */
 #pragma once
 
+
 /**
  * Configuration_adv.h
  *
@@ -118,11 +119,13 @@
   #define COOLER_RESISTANCE_25C_OHMS  100000  // Resistance at 25C
   #define COOLER_BETA                 3950    // Beta value
 #endif
+
 #if TEMP_SENSOR_PROBE == 1000
   #define PROBE_PULLUP_RESISTOR_OHMS   4700    // Pullup resistor
   #define PROBE_RESISTANCE_25C_OHMS    100000  // Resistance at 25C
   #define PROBE_BETA                   3950    // Beta value
 #endif
+
 //
 // Hephestos 2 24V heated bed upgrade kit.
 // https://store.bq.com/en/heated-bed-kit-hephestos2
@@ -153,12 +156,9 @@
     #define CHAMBER_HYSTERESIS 2        // (°C) Only set the relevant heater state when ABS(T-target) > CHAMBER_HYSTERESIS
   #endif
 #endif
+
 #if TEMP_SENSOR_CHAMBER
-  #define CHAMBER_MINTEMP             5
-  #define CHAMBER_MAXTEMP            60
-  #define TEMP_CHAMBER_HYSTERESIS     1   // (°C) Temperature proximity considered "close enough" to the target
-  //#define CHAMBER_LIMIT_SWITCHING
-  //#define HEATER_CHAMBER_PIN       44   // Chamber heater on/off pin
+  //#define HEATER_CHAMBER_PIN      P2_04   // Required heater on/off pin (example: SKR 1.4 Turbo HE1 plug)
   //#define HEATER_CHAMBER_INVERTING false
   //#define FAN1_PIN                   -1   // Remove the fan signal on pin P2_04 (example: SKR 1.4 Turbo HE1 plug)
 
@@ -204,6 +204,7 @@
     #define COOLER_FAN_FACTOR     25  // PWM increase per °C above target
   #endif
 #endif
+
 /**
  * Thermal Protection provides additional protection to your printer from damage
  * and fire. Marlin always includes safe min and max temperature ranges which
@@ -286,6 +287,7 @@
   #define WATCH_COOLER_TEMP_PERIOD            60 // Seconds
   #define WATCH_COOLER_TEMP_INCREASE           3 // Degrees Celsius
 #endif
+
 #if ENABLED(PIDTEMP)
   // Add an experimental additional term to the heater power, proportional to the extrusion speed.
   // A well-chosen Kc value should add just enough power to melt the increased material volume.
@@ -332,8 +334,8 @@
       // DEFAULT_Kf and PID_FAN_SCALING_LIN_FACTOR are calculated accordingly.
 
       #define PID_FAN_SCALING_AT_FULL_SPEED 13.0        //=PID_FAN_SCALING_LIN_FACTOR*255+DEFAULT_Kf
-      #define PID_FAN_SCALING_AT_MIN_SPEED   6.0        //=PID_FAN_SCALING_LIN_FACTOR*PID_FAN_SCALING_MIN_SPEED+DEFAULT_Kf
-      #define PID_FAN_SCALING_MIN_SPEED     10.0        // Minimum fan speed at which to enable PID_FAN_SCALING
+      #define PID_FAN_SCALING_AT_MIN_SPEED 6.0          //=PID_FAN_SCALING_LIN_FACTOR*PID_FAN_SCALING_MIN_SPEED+DEFAULT_Kf
+      #define PID_FAN_SCALING_MIN_SPEED 10.0            // Minimum fan speed at which to enable PID_FAN_SCALING
 
       #define DEFAULT_Kf (255.0*PID_FAN_SCALING_AT_MIN_SPEED-PID_FAN_SCALING_AT_FULL_SPEED*PID_FAN_SCALING_MIN_SPEED)/(255.0-PID_FAN_SCALING_MIN_SPEED)
       #define PID_FAN_SCALING_LIN_FACTOR (PID_FAN_SCALING_AT_FULL_SPEED-DEFAULT_Kf)/255.0
@@ -379,7 +381,7 @@
  * High Temperature Thermistor Support
  *
  * Thermistors able to support high temperature tend to have a hard time getting
- * good readings at room and lower temperatures. This means TEMP_SENSOR_X_RAW_LO_TEMP
+ * good readings at room and lower temperatures. This means HEATER_X_RAW_LO_TEMP
  * will probably be caught when the heating element first turns on during the
  * preheating process, which will trigger a min_temp_error as a safety measure
  * and force stop everything.
@@ -560,9 +562,9 @@
   //#define CASE_LIGHT_PIN 4                  // Override the default pin if needed
   #define INVERT_CASE_LIGHT false             // Set true if Case Light is ON when pin is LOW
   #define CASE_LIGHT_DEFAULT_ON true          // Set default power-up state on
-  #define CASE_LIGHT_DEFAULT_BRIGHTNESS 105   // Set default power-up brightness (0-255, requires PWM pin) 
+  #define CASE_LIGHT_DEFAULT_BRIGHTNESS 105   // Set default power-up brightness (0-255, requires PWM pin)
   //#define CASE_LIGHT_NO_BRIGHTNESS          // Disable brightness control. Enable for non-PWM lighting.
-  //#define CASE_LIGHT_MAX_PWM 128            // Limit pwm
+  //#define CASE_LIGHT_MAX_PWM 128            // Limit PWM duty cycle (0-255)
   //#define CASE_LIGHT_MENU                   // Add Case Light options to the LCD menu
   #if ENABLED(NEOPIXEL_LED)
     //#define CASE_LIGHT_USE_NEOPIXEL         // Use NeoPixel LED as case light
@@ -723,8 +725,8 @@
 
 //#define HOMING_BACKOFF_POST_MM { 2, 2, 2 }  // (mm) Backoff from endstops after homing
 
-//#define QUICK_HOME                          // If G28 contains XY do a diagonal move first
-#define HOME_Y_BEFORE_X                     // If G28 contains XY home Y before X
+#define QUICK_HOME                            // If G28 contains XY do a diagonal move first
+//#define HOME_Y_BEFORE_X                     // If G28 contains XY home Y before X
 //#define HOME_Z_FIRST                        // Home Z first. Requires a Z-MIN endstop (not a probe).
 //#define CODEPENDENT_XY_HOMING               // If X/Y can't home without homing Y/X first
 
@@ -748,7 +750,7 @@
 
   // Safety: The probe needs time to recognize the command.
   //         Minimum command delay (ms). Enable and increase if needed.
-  #define BLTOUCH_DELAY 500
+  //#define BLTOUCH_DELAY 500
 
   /**
    * Settings for BLTOUCH Classic 1.2, 1.3 or BLTouch Smart 1.0, 2.0, 2.2, 3.0, 3.1, and most clones:
@@ -787,10 +789,10 @@
   /**
    * Use "HIGH SPEED" mode for probing.
    * Danger: Disable if your probe sometimes fails. Only suitable for stable well-adjusted systems.
-   * This feature was designed for Delta's with very fast Z moves however higher speed cartesians may function
-   * If the machine cannot raise the probe fast enough after a trigger, it may enter a fault state.
+   * This feature was designed for Deltabots with very fast Z moves; however, higher speed Cartesians
+   * might be able to use it. If the machine can't raise Z fast enough the BLTouch may go into ALARM.
    */
-  //#define BLTOUCH_HS_MODE
+  #define BLTOUCH_HS_MODE
 
   // Safety: Enable voltage mode settings in the LCD menu.
   //#define BLTOUCH_LCD_VOLTAGE_MENU
@@ -912,9 +914,6 @@
 #define DISABLE_INACTIVE_Y true
 #define DISABLE_INACTIVE_Z true  // Set 'false' if the nozzle could fall onto your printed part!
 #define DISABLE_INACTIVE_E true
-
-// If the Nozzle or Bed falls when the Z stepper is disabled, set its resting position here.
-//#define Z_AFTER_DEACTIVATE Z_HOME_POS
 
 // Default Minimum Feedrates for printing and travel moves
 #define DEFAULT_MINIMUMFEEDRATE       0.0     // (mm/s) Minimum feedrate. Set with M205 S.
@@ -1129,7 +1128,7 @@
 #if ENABLED(ENCODER_RATE_MULTIPLIER)
   #define ENCODER_5X_STEPS_PER_SEC    30
   #define ENCODER_10X_STEPS_PER_SEC   80  // (steps/s) Encoder rate for 10x speed
-  #define ENCODER_100X_STEPS_PER_SEC  130  // (steps/s) Encoder rate for 100x speed
+  #define ENCODER_100X_STEPS_PER_SEC 130  // (steps/s) Encoder rate for 100x speed
 #endif
 
 // Play a beep when the feedrate is changed from the Status Screen
@@ -1194,13 +1193,11 @@
       //#define NEO2_USER_PRESET_STARTUP       // Have the printer display the user preset color on startup for the second strip
     #endif
   #endif
-  
+
   // Insert a menu for preheating at the top level to allow for quick access
   //#define PREHEAT_SHORTCUT_MENU_ITEM
 
 #endif // HAS_LCD_MENU
-
-//#define LCD_SET_PROGRESS_MANUALLY
 
 #if HAS_DISPLAY
   // The timeout (in ms) to return to the status screen from sub-menus
@@ -1284,10 +1281,10 @@
   //#define NO_SD_AUTOSTART                 // Remove auto#.g file support completely to save some Flash, SRAM
   //#define MENU_ADDAUTOSTART               // Add a menu option to run auto#.g files
 
-//#define BROWSE_MEDIA_ON_INSERT          // Open the file browser when media is inserted
-  
-  #define EVENT_GCODE_SD_ABORT "G27 P2"       // G-code to run on Stop Print (e.g., "G28XY" or "G27")
-  
+  //#define BROWSE_MEDIA_ON_INSERT          // Open the file browser when media is inserted
+
+  #define EVENT_GCODE_SD_ABORT "G28XY"      // G-code to run on SD Abort Print (e.g., "G28XY" or "G27")
+
   #if ENABLED(PRINTER_EVENT_LEDS)
     #define PE_LEDS_COMPLETED_TIME  (30*60) // (seconds) Time to keep the LED "done" color before restoring normal illumination
   #endif
@@ -1316,7 +1313,7 @@
     // especially with "vase mode" printing. Set too high and vases cannot be continued.
     #define POWER_LOSS_MIN_Z_CHANGE 0.05 // (mm) Minimum Z change before saving power-loss data
 
-	// Enable if Z homing is needed for proper recovery. 99.9% of the time this should be disabled!
+    // Enable if Z homing is needed for proper recovery. 99.9% of the time this should be disabled!
     //#define POWER_LOSS_RECOVER_ZHOME
     #if ENABLED(POWER_LOSS_RECOVER_ZHOME)
       //#define POWER_LOSS_ZHOME_POS { 0, 0 } // Safe XY position to home Z while avoiding objects on the bed
@@ -1472,7 +1469,7 @@
  * By default an onboard SD card reader may be shared as a USB mass-
  * storage device. This option hides the SD card from the host PC.
  */
-//#define NO_SD_HOST_DRIVE   // Disable SD Card access over USB (for security).
+#define NO_SD_HOST_DRIVE   // Disable SD Card access over USB (for security).
 
 /**
  * Additional options for Graphical Displays
@@ -1594,19 +1591,6 @@
     #endif
   #endif
 #endif // HAS_DGUS_LCD
-
-//
-// Specify additional languages for the UI. Default specified by LCD_LANGUAGE.
-//
-#if ANY(DOGLCD, TFT_COLOR_UI, TOUCH_UI_FTDI_EVE)
-  //#define LCD_LANGUAGE_2 fr
-  //#define LCD_LANGUAGE_3 de
-  //#define LCD_LANGUAGE_4 es
-  //#define LCD_LANGUAGE_5 it
-  #ifdef LCD_LANGUAGE_2
-    //#define LCD_LANGUAGE_AUTO_SAVE // Automatically save language to EEPROM on change
-  #endif
-#endif
 
 //
 // Touch UI for the FTDI Embedded Video Engine (EVE)
@@ -1750,12 +1734,12 @@
 #define BABYSTEPPING
 #if ENABLED(BABYSTEPPING)
   //#define INTEGRATED_BABYSTEPPING         // EXPERIMENTAL integration of babystepping into the Stepper ISR
-  #define BABYSTEP_WITHOUT_HOMING
+  //#define BABYSTEP_WITHOUT_HOMING
   //#define BABYSTEP_ALWAYS_AVAILABLE       // Allow babystepping at all times (not just during movement).
   //#define BABYSTEP_XY                     // Also enable X/Y Babystepping. Not supported on DELTA!
   #define BABYSTEP_INVERT_Z false           // Change if Z babysteps should go the other way
   //#define BABYSTEP_MILLIMETER_UNITS       // Specify BABYSTEP_MULTIPLICATOR_(XY|Z) in mm instead of micro-steps
-  #define BABYSTEP_MULTIPLICATOR_Z  40       // (steps or mm) Steps or millimeter distance for each Z babystep
+  #define BABYSTEP_MULTIPLICATOR_Z  40      // (steps or mm) Steps or millimeter distance for each Z babystep
   #define BABYSTEP_MULTIPLICATOR_XY 1       // (steps or mm) Steps or millimeter distance for each XY babystep
 
   //#define DOUBLECLICK_FOR_Z_BABYSTEPPING  // Double-click on the Status Screen for Z Babystepping.
@@ -2098,7 +2082,7 @@
  * Currently handles M108, M112, M410, M876
  * NOTE: Not yet implemented for all platforms.
  */
-#define EMERGENCY_PARSER
+//#define EMERGENCY_PARSER
 
 // Bad Serial-connections can miss a received command by sending an 'ok'
 // Therefore some clients abort after 30 seconds in a timeout.
@@ -2246,22 +2230,22 @@
   #define PAUSE_PARK_RETRACT_FEEDRATE         60  // (mm/s) Initial retract feedrate.
   #define PAUSE_PARK_RETRACT_LENGTH            2  // (mm) Initial retract.
                                                   // This short retract is done immediately, before parking the nozzle.
-  #define FILAMENT_CHANGE_UNLOAD_FEEDRATE     25  // (mm/s) Unload filament feedrate. This can be pretty fast.
+  #define FILAMENT_CHANGE_UNLOAD_FEEDRATE     10  // (mm/s) Unload filament feedrate. This can be pretty fast.
   #define FILAMENT_CHANGE_UNLOAD_ACCEL        25  // (mm/s^2) Lower acceleration may allow a faster feedrate.
-  #define FILAMENT_CHANGE_UNLOAD_LENGTH      400  // (mm) The length of filament for a complete unload.
+  #define FILAMENT_CHANGE_UNLOAD_LENGTH        0  // (mm) The length of filament for a complete unload.
                                                   //   For Bowden, the full length of the tube and nozzle.
                                                   //   For direct drive, the full length of the nozzle.
                                                   //   Set to 0 for manual unloading.
   #define FILAMENT_CHANGE_SLOW_LOAD_FEEDRATE   6  // (mm/s) Slow move when starting load.
   #define FILAMENT_CHANGE_SLOW_LOAD_LENGTH     0  // (mm) Slow length, to allow time to insert material.
                                                   // 0 to disable start loading and skip to fast load only
-  #define FILAMENT_CHANGE_FAST_LOAD_FEEDRATE  25  // (mm/s) Load filament feedrate. This can be pretty fast.
+  #define FILAMENT_CHANGE_FAST_LOAD_FEEDRATE  10  // (mm/s) Load filament feedrate. This can be pretty fast.
   #define FILAMENT_CHANGE_FAST_LOAD_ACCEL     25  // (mm/s^2) Lower acceleration may allow a faster feedrate.
-  #define FILAMENT_CHANGE_FAST_LOAD_LENGTH   400  // (mm) Load length of filament, from extruder gear to nozzle.
+  #define FILAMENT_CHANGE_FAST_LOAD_LENGTH     0  // (mm) Load length of filament, from extruder gear to nozzle.
                                                   //   For Bowden, the full length of the tube and nozzle.
                                                   //   For direct drive, the full length of the nozzle.
   //#define ADVANCED_PAUSE_CONTINUOUS_PURGE       // Purge continuously up to the purge length until interrupted.
-  #define ADVANCED_PAUSE_PURGE_FEEDRATE        5  // (mm/s) Extrude feedrate (after loading). Should be slower than load feedrate.
+  #define ADVANCED_PAUSE_PURGE_FEEDRATE        3  // (mm/s) Extrude feedrate (after loading). Should be slower than load feedrate.
   #define ADVANCED_PAUSE_PURGE_LENGTH         50  // (mm) Length to extrude after loading.
                                                   //   Set to 0 for manual extrusion.
                                                   //   Filament can be extruded repeatedly from the Filament Change menu
@@ -2275,7 +2259,7 @@
   #define FILAMENT_UNLOAD_PURGE_LENGTH         8  // (mm) An unretract is done, then this length is purged.
   #define FILAMENT_UNLOAD_PURGE_FEEDRATE      25  // (mm/s) feedrate to purge before unload
 
-  #define PAUSE_PARK_NOZZLE_TIMEOUT           60  // (seconds) Time limit before the nozzle is turned off for safety.
+  #define PAUSE_PARK_NOZZLE_TIMEOUT           45  // (seconds) Time limit before the nozzle is turned off for safety.
   #define FILAMENT_CHANGE_ALERT_BEEPS         10  // Number of alert beeps to play when a response is needed.
   #define PAUSE_PARK_NO_STEPPER_TIMEOUT           // Enable for XYZ steppers to stay powered on during filament change.
 
@@ -2827,138 +2811,138 @@
   #endif
 
   #if AXIS_IS_L64XX(X2)
-    #define X2_MICROSTEPS      X_MICROSTEPS
-    #define X2_OVERCURRENT    2000
-    #define X2_STALLCURRENT   1500
-    #define X2_MAX_VOLTAGE     127
-    #define X2_CHAIN_POS        -1
-    #define X2_SLEW_RATE         1
+    #define X2_MICROSTEPS     X_MICROSTEPS
+    #define X2_OVERCURRENT            2000
+    #define X2_STALLCURRENT           1500
+    #define X2_MAX_VOLTAGE             127
+    #define X2_CHAIN_POS                -1
+    #define X2_SLEW_RATE                 1
   #endif
 
   #if AXIS_IS_L64XX(Y)
-    #define Y_MICROSTEPS       128
-    #define Y_OVERCURRENT     2000
-    #define Y_STALLCURRENT    1500
-    #define Y_MAX_VOLTAGE      127
-    #define Y_CHAIN_POS         -1
-    #define Y_SLEW_RATE          1
+    #define Y_MICROSTEPS               128
+    #define Y_OVERCURRENT             2000
+    #define Y_STALLCURRENT            1500
+    #define Y_MAX_VOLTAGE              127
+    #define Y_CHAIN_POS                 -1
+    #define Y_SLEW_RATE                  1
   #endif
 
   #if AXIS_IS_L64XX(Y2)
-    #define Y2_MICROSTEPS      Y_MICROSTEPS
-    #define Y2_OVERCURRENT    2000
-    #define Y2_STALLCURRENT   1500
-    #define Y2_MAX_VOLTAGE     127
-    #define Y2_CHAIN_POS        -1
-    #define Y2_SLEW_RATE         1
+    #define Y2_MICROSTEPS     Y_MICROSTEPS
+    #define Y2_OVERCURRENT            2000
+    #define Y2_STALLCURRENT           1500
+    #define Y2_MAX_VOLTAGE             127
+    #define Y2_CHAIN_POS                -1
+    #define Y2_SLEW_RATE                 1
   #endif
 
   #if AXIS_IS_L64XX(Z)
-    #define Z_MICROSTEPS       128
-    #define Z_OVERCURRENT     2000
-    #define Z_STALLCURRENT    1500
-    #define Z_MAX_VOLTAGE      127
-    #define Z_CHAIN_POS         -1
-    #define Z_SLEW_RATE          1
+    #define Z_MICROSTEPS               128
+    #define Z_OVERCURRENT             2000
+    #define Z_STALLCURRENT            1500
+    #define Z_MAX_VOLTAGE              127
+    #define Z_CHAIN_POS                 -1
+    #define Z_SLEW_RATE                  1
   #endif
 
   #if AXIS_IS_L64XX(Z2)
-    #define Z2_MICROSTEPS      Z_MICROSTEPS
-    #define Z2_OVERCURRENT    2000
-    #define Z2_STALLCURRENT   1500
-    #define Z2_MAX_VOLTAGE     127
-    #define Z2_CHAIN_POS        -1
-    #define Z2_SLEW_RATE         1
+    #define Z2_MICROSTEPS     Z_MICROSTEPS
+    #define Z2_OVERCURRENT            2000
+    #define Z2_STALLCURRENT           1500
+    #define Z2_MAX_VOLTAGE             127
+    #define Z2_CHAIN_POS                -1
+    #define Z2_SLEW_RATE                 1
   #endif
 
   #if AXIS_IS_L64XX(Z3)
-    #define Z3_MICROSTEPS      Z_MICROSTEPS
-    #define Z3_OVERCURRENT    2000
-    #define Z3_STALLCURRENT   1500
-    #define Z3_MAX_VOLTAGE     127
-    #define Z3_CHAIN_POS        -1
-    #define Z3_SLEW_RATE         1
+    #define Z3_MICROSTEPS     Z_MICROSTEPS
+    #define Z3_OVERCURRENT            2000
+    #define Z3_STALLCURRENT           1500
+    #define Z3_MAX_VOLTAGE             127
+    #define Z3_CHAIN_POS                -1
+    #define Z3_SLEW_RATE                 1
   #endif
 
   #if AXIS_IS_L64XX(Z4)
-    #define Z4_MICROSTEPS      Z_MICROSTEPS
-    #define Z4_OVERCURRENT    2000
-    #define Z4_STALLCURRENT   1500
-    #define Z4_MAX_VOLTAGE     127
-    #define Z4_CHAIN_POS        -1
-    #define Z4_SLEW_RATE         1
+    #define Z4_MICROSTEPS     Z_MICROSTEPS
+    #define Z4_OVERCURRENT            2000
+    #define Z4_STALLCURRENT           1500
+    #define Z4_MAX_VOLTAGE             127
+    #define Z4_CHAIN_POS                -1
+    #define Z4_SLEW_RATE                 1
   #endif
 
   #if AXIS_IS_L64XX(E0)
-    #define E0_MICROSTEPS      128
-    #define E0_OVERCURRENT    2000
-    #define E0_STALLCURRENT   1500
-    #define E0_MAX_VOLTAGE     127
-    #define E0_CHAIN_POS        -1
-    #define E0_SLEW_RATE         1
+    #define E0_MICROSTEPS              128
+    #define E0_OVERCURRENT            2000
+    #define E0_STALLCURRENT           1500
+    #define E0_MAX_VOLTAGE             127
+    #define E0_CHAIN_POS                -1
+    #define E0_SLEW_RATE                 1
   #endif
 
   #if AXIS_IS_L64XX(E1)
-    #define E1_MICROSTEPS      E0_MICROSTEPS
-    #define E1_OVERCURRENT    2000
-    #define E1_STALLCURRENT   1500
-    #define E1_MAX_VOLTAGE     127
-    #define E1_CHAIN_POS        -1
-    #define E1_SLEW_RATE         1
+    #define E1_MICROSTEPS    E0_MICROSTEPS
+    #define E1_OVERCURRENT            2000
+    #define E1_STALLCURRENT           1500
+    #define E1_MAX_VOLTAGE             127
+    #define E1_CHAIN_POS                -1
+    #define E1_SLEW_RATE                 1
   #endif
 
   #if AXIS_IS_L64XX(E2)
-    #define E2_MICROSTEPS      E0_MICROSTEPS
-    #define E2_OVERCURRENT    2000
-    #define E2_STALLCURRENT   1500
-    #define E2_MAX_VOLTAGE     127
-    #define E2_CHAIN_POS        -1
-    #define E2_SLEW_RATE         1
+    #define E2_MICROSTEPS    E0_MICROSTEPS
+    #define E2_OVERCURRENT            2000
+    #define E2_STALLCURRENT           1500
+    #define E2_MAX_VOLTAGE             127
+    #define E2_CHAIN_POS                -1
+    #define E2_SLEW_RATE                 1
   #endif
 
   #if AXIS_IS_L64XX(E3)
-    #define E3_MICROSTEPS      E0_MICROSTEPS
-    #define E3_OVERCURRENT    2000
-    #define E3_STALLCURRENT   1500
-    #define E3_MAX_VOLTAGE     127
-    #define E3_CHAIN_POS        -1
-    #define E3_SLEW_RATE         1
+    #define E3_MICROSTEPS    E0_MICROSTEPS
+    #define E3_OVERCURRENT            2000
+    #define E3_STALLCURRENT           1500
+    #define E3_MAX_VOLTAGE             127
+    #define E3_CHAIN_POS                -1
+    #define E3_SLEW_RATE                 1
   #endif
 
   #if AXIS_IS_L64XX(E4)
-    #define E4_MICROSTEPS      E0_MICROSTEPS
-    #define E4_OVERCURRENT    2000
-    #define E4_STALLCURRENT   1500
-    #define E4_MAX_VOLTAGE     127
-    #define E4_CHAIN_POS        -1
-    #define E4_SLEW_RATE         1
+    #define E4_MICROSTEPS    E0_MICROSTEPS
+    #define E4_OVERCURRENT            2000
+    #define E4_STALLCURRENT           1500
+    #define E4_MAX_VOLTAGE             127
+    #define E4_CHAIN_POS                -1
+    #define E4_SLEW_RATE                 1
   #endif
 
   #if AXIS_IS_L64XX(E5)
-    #define E5_MICROSTEPS      E0_MICROSTEPS
-    #define E5_OVERCURRENT    2000
-    #define E5_STALLCURRENT   1500
-    #define E5_MAX_VOLTAGE     127
-    #define E5_CHAIN_POS        -1
-    #define E5_SLEW_RATE         1
+    #define E5_MICROSTEPS    E0_MICROSTEPS
+    #define E5_OVERCURRENT            2000
+    #define E5_STALLCURRENT           1500
+    #define E5_MAX_VOLTAGE             127
+    #define E5_CHAIN_POS                -1
+    #define E5_SLEW_RATE                 1
   #endif
 
   #if AXIS_IS_L64XX(E6)
-    #define E6_MICROSTEPS      E0_MICROSTEPS
-    #define E6_OVERCURRENT    2000
-    #define E6_STALLCURRENT   1500
-    #define E6_MAX_VOLTAGE     127
-    #define E6_CHAIN_POS        -1
-    #define E6_SLEW_RATE         1
+    #define E6_MICROSTEPS    E0_MICROSTEPS
+    #define E6_OVERCURRENT            2000
+    #define E6_STALLCURRENT           1500
+    #define E6_MAX_VOLTAGE             127
+    #define E6_CHAIN_POS                -1
+    #define E6_SLEW_RATE                 1
   #endif
 
   #if AXIS_IS_L64XX(E7)
-    #define E7_MICROSTEPS      E0_MICROSTEPS
-    #define E7_OVERCURRENT    2000
-    #define E7_STALLCURRENT   1500
-    #define E7_MAX_VOLTAGE     127
-    #define E7_CHAIN_POS        -1
-    #define E7_SLEW_RATE         1
+    #define E7_MICROSTEPS    E0_MICROSTEPS
+    #define E7_OVERCURRENT            2000
+    #define E7_STALLCURRENT           1500
+    #define E7_MAX_VOLTAGE             127
+    #define E7_CHAIN_POS                -1
+    #define E7_SLEW_RATE                 1
   #endif
 
   /**
@@ -3440,9 +3424,9 @@
 #endif
 
 /**
- * User-defined menu items to run custom G-code.
- * Up to 25 may be defined, but the actual number is LCD-dependent.
+ * User-defined menu items that execute custom GCode
  */
+
 // Custom Menu: Main Menu
 //#define CUSTOM_MENU_MAIN
 #if ENABLED(CUSTOM_MENU_MAIN)
@@ -3895,3 +3879,10 @@
 
 // Enable Marlin dev mode which adds some special commands
 //#define MARLIN_DEV_MODE
+
+/**
+ * Postmortem Debugging captures misbehavior and outputs the CPU status and backtrace to serial.
+ * When running in the debugger it will break for debugging. This is useful to help understand
+ * a crash from a remote location. Requires ~400 bytes of SRAM and 5Kb of flash.
+ */
+//#define POSTMORTEM_DEBUGGING
