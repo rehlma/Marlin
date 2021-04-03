@@ -89,7 +89,7 @@
 
 #define CORP_WEBSITE_E "Jyers/L.Christophe"
 
-#define BUILD_NUMBER "1.2.3.c"
+#define BUILD_NUMBER "1.2.3.d"
 
 #define DWIN_FONT_MENU font8x16
 #define DWIN_FONT_STAT font10x20
@@ -1795,12 +1795,12 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
           #if HAS_HOTEND
             case PID_HOTEND:
               if (draw) {
-                Draw_Menu_Item(row, ICON_SetEndTemp, (char*)"Hotend");
+                Draw_Menu_Item(row, ICON_SetEndTemp, (char*)"PID Hotend");
               }
               else {
                 Popup_Handler(PIDHotend);
                 char buf[30];
-                sprintf(buf, "M303 E0 C%i S%i", PID_cycles, PID_e_temp);
+                sprintf(buf, "M303 E0 C%i S%i U1", PID_cycles, PID_e_temp);
                 gcode.process_subcommands_now_P(buf);
               }
               break;
@@ -1808,12 +1808,12 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
           #if HAS_HEATED_BED
             case PID_BED:
               if (draw) {
-                Draw_Menu_Item(row, ICON_SetBedTemp, (char*)"Bed");
+                Draw_Menu_Item(row, ICON_SetBedTemp, (char*)"PID Bed");
               }
               else {
                 Popup_Handler(PIDBed);
                 char buf[30];
-                sprintf(buf, "M303 E-1 C%i S%i", PID_cycles, PID_bed_temp);
+                sprintf(buf, "M303 E-1 C%i S%i U1", PID_cycles, PID_bed_temp);
                 gcode.process_subcommands_now_P(buf);
               }
               break;
@@ -2467,7 +2467,7 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
         #if ENABLED(HAS_BED_PROBE)
           case ADVANCED_BLTOUCH:
             if (draw) {
-              Draw_Menu_Item(row, ICON_StockConfiguraton, (char*)"BLTouch/3DTouch", NULL, true);
+              Draw_Menu_Item(row, ICON_StockConfiguraton, (char*)"3D/BLTouch or TouchMI", NULL, true);
             }
             else {
               Draw_Menu(BLTouch);
@@ -2616,40 +2616,42 @@ void CrealityDWINClass::Menu_Item_Handler(uint8_t menu, uint8_t item, bool draw/
                 Modify_Value(probe.offset.z, -10, 10, 100);
               }
               break;
-            case BLTOUCH_ALARMR:
-              if (draw) {
-                Draw_Menu_Item(row, ICON_StockConfiguraton, (char*)"Probe Alarm Release");
-              }
-              else {
-                gcode.process_subcommands_now_P(PSTR("M280 P0 S160"));
-                AudioFeedback();
-              }
-              break;
-            case BLTOUCH_SELFTEST:
-              if (draw) {
-                Draw_Menu_Item(row, ICON_StockConfiguraton, (char*)"Probe Self Test");
-              }
-              else {
-                gcode.process_subcommands_now_P(PSTR("M280 P0 S120\nG4 P1000\nM280 P0 S160"));
-                AudioFeedback();
-              }
-              break;
-            case BLTOUCH_MOVEP:
-              if (draw) {
-                Draw_Menu_Item(row, ICON_StockConfiguraton, (char*)"Probe Pin UP/DOWN");
-                Draw_Checkbox(row, probe_deployed);
-              }
-              else {
-                probe_deployed = !probe_deployed;
-                if (probe_deployed == true) {
-                  gcode.process_subcommands_now_P(PSTR("M280 P0 S10"));
+            #if ENABLED(BLTOUCH)
+              case BLTOUCH_ALARMR:
+                if (draw) {
+                 Draw_Menu_Item(row, ICON_StockConfiguraton, (char*)"Probe Alarm Release");
                 }
                 else {
-                  gcode.process_subcommands_now_P(PSTR("M280 P0 S90"));
+                  gcode.process_subcommands_now_P(PSTR("M280 P0 S160"));
+                  AudioFeedback();
                 }
-                Draw_Checkbox(row, probe_deployed);
-              }
-              break;
+                break;
+              case BLTOUCH_SELFTEST:
+                if (draw) {
+                  Draw_Menu_Item(row, ICON_StockConfiguraton, (char*)"Probe Self Test");
+                }
+                else {
+                  gcode.process_subcommands_now_P(PSTR("M280 P0 S120\nG4 P1000\nM280 P0 S160"));
+                  AudioFeedback();
+                }
+                break;
+              case BLTOUCH_MOVEP:
+                if (draw) {
+                  Draw_Menu_Item(row, ICON_StockConfiguraton, (char*)"Probe Pin UP/DOWN");
+                  Draw_Checkbox(row, probe_deployed);
+                }
+                else {
+                  probe_deployed = !probe_deployed;
+                  if (probe_deployed == true) {
+                    gcode.process_subcommands_now_P(PSTR("M280 P0 S10"));
+                  }
+                  else {
+                    gcode.process_subcommands_now_P(PSTR("M280 P0 S90"));
+                  }
+                  Draw_Checkbox(row, probe_deployed);
+                }
+                break;
+            #endif
           #endif
         }
       break;
@@ -3719,7 +3721,7 @@ char* CrealityDWINClass::Get_Menu_Title(uint8_t menu) {
       return (char*)"Advanced Settings";
     #if ENABLED(HAS_BED_PROBE)
       case BLTouch:
-        return (char*)"BLTouch/3DTouch";
+        return (char*)"3D/BLTouch or TouchMI";
     #endif
     #if HAS_MESH
       case ViewMesh:
