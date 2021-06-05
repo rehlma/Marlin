@@ -73,6 +73,10 @@
   #include "../lcd/extui/ui_api.h"
 #endif
 
+#if ENABLED(DWIN_CREALITY_LCD)
+  #include "../lcd/dwin/creality_dwin.h"
+#endif
+
 #if HAS_SERVOS
   #include "servo.h"
 #endif
@@ -151,6 +155,11 @@
 
 #if ENABLED(SOUND_MENU_ITEM)
   #include "../libs/buzzer.h"
+#endif
+
+#if ENABLED(DGUS_LCD_UI_MKS)
+  #include "../lcd/extui/dgus/DGUSScreenHandler.h"
+  #include "../lcd/extui/dgus/DGUSDisplayDef.h"
 #endif
 
 #pragma pack(push, 1) // No padding between variables
@@ -429,6 +438,13 @@ typedef struct SettingsDataStruct {
   #endif
 
   //
+  // EXTENSIBLE_UI
+  //
+  #if ENABLED(DWIN_CREALITY_LCD)
+    uint8_t creality_settings[CrealityDWIN.eeprom_data_size];
+  #endif
+
+  //
   // CASELIGHT_USES_BRIGHTNESS
   //
   #if CASELIGHT_USES_BRIGHTNESS
@@ -464,6 +480,16 @@ typedef struct SettingsDataStruct {
   //
   #if ENABLED(SOUND_MENU_ITEM)
     bool buzzer_enabled;
+  #endif
+
+  //
+  // MKS UI controller
+  //
+  #if ENABLED(DGUS_LCD_UI_MKS)
+    uint8_t mks_language_index;                         // Display Language
+    xy_int_t mks_corner_offsets[5];                     // Bed Tramming
+    xyz_int_t mks_park_pos;                             // Custom Parking (without NOZZLE_PARK)
+    celsius_t mks_min_extrusion_temp;                   // Min E Temp (shadow M302 value)
   #endif
 
   #if HAS_MULTI_LANGUAGE
@@ -522,6 +548,8 @@ void MarlinSettings::postprocess() {
   TERN_(HAS_LINEAR_E_JERK, planner.recalculate_max_e_jerk());
 
   TERN_(CASELIGHT_USES_BRIGHTNESS, caselight.update_brightness());
+
+  TERN_(EXTENSIBLE_UI, ExtUI::onPostprocessSettings());
 
   // Refresh steps_to_mm with the reciprocal of axis_steps_per_mm
   // and init stepper.count[], planner.position[] with current_position
@@ -1376,6 +1404,18 @@ void MarlinSettings::postprocess() {
     #endif
 
     //
+    // Creality UI Settings
+    //
+    #if ENABLED(DWIN_CREALITY_LCD)
+        {
+          char dwin_settings[CrealityDWIN.eeprom_data_size] = { 0 };
+          CrealityDWIN.Save_Settings(dwin_settings);
+          _FIELD_TEST(dwin_settings);
+          EEPROM_WRITE(dwin_settings);
+        }
+      #endif
+
+    //
     // Case Light Brightness
     //
     #if CASELIGHT_USES_BRIGHTNESS
@@ -1421,6 +1461,16 @@ void MarlinSettings::postprocess() {
     //
     #if ENABLED(SOUND_MENU_ITEM)
       EEPROM_WRITE(ui.buzzer_enabled);
+    #endif
+
+    //
+    // MKS UI controller
+    //
+    #if ENABLED(DGUS_LCD_UI_MKS)
+      EEPROM_WRITE(mks_language_index);
+      EEPROM_WRITE(mks_corner_offsets);
+      EEPROM_WRITE(mks_park_pos);
+      EEPROM_WRITE(mks_min_extrusion_temp);
     #endif
 
     //
@@ -1601,7 +1651,7 @@ void MarlinSettings::postprocess() {
 
         #if ENABLED(MESH_BED_LEVELING)
           if (!validating) mbl.z_offset = dummyf;
-          if (mesh_num_x == GRID_MAX_POINTS_X && mesh_num_y == GRID_MAX_POINTS_Y) {
+          if (mesh_num_x == (GRID_MAX_POINTS_X) && mesh_num_y == (GRID_MAX_POINTS_Y)) {
             // EEPROM data fits the current mesh
             EEPROM_READ(mbl.z_values);
           }
@@ -1648,7 +1698,7 @@ void MarlinSettings::postprocess() {
         EEPROM_READ_ALWAYS(grid_max_x);                // 1 byte
         EEPROM_READ_ALWAYS(grid_max_y);                // 1 byte
         #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
-          if (grid_max_x == GRID_MAX_POINTS_X && grid_max_y == GRID_MAX_POINTS_Y) {
+          if (grid_max_x == (GRID_MAX_POINTS_X) && grid_max_y == (GRID_MAX_POINTS_Y)) {
             if (!validating) set_bed_leveling_enabled(false);
             EEPROM_READ(bilinear_grid_spacing);        // 2 ints
             EEPROM_READ(bilinear_start);               // 2 ints
@@ -2290,6 +2340,18 @@ void MarlinSettings::postprocess() {
       #endif
 
       //
+      // Creality UI Settings
+      //
+      #if ENABLED(DWIN_CREALITY_LCD)
+        {
+          const char dwin_settings[CrealityDWIN.eeprom_data_size] = { 0 };
+          _FIELD_TEST(dwin_settings);
+          EEPROM_READ(dwin_settings);
+          if (!validating) CrealityDWIN.Load_Settings(dwin_settings);
+        }
+      #endif
+
+      //
       // Case Light Brightness
       //
       #if CASELIGHT_USES_BRIGHTNESS
@@ -2333,6 +2395,17 @@ void MarlinSettings::postprocess() {
       #if ENABLED(SOUND_MENU_ITEM)
         _FIELD_TEST(buzzer_enabled);
         EEPROM_READ(ui.buzzer_enabled);
+      #endif
+
+      //
+      // MKS UI controller
+      //
+      #if ENABLED(DGUS_LCD_UI_MKS)
+        _FIELD_TEST(mks_language_index);
+        EEPROM_READ(mks_language_index);
+        EEPROM_READ(mks_corner_offsets);
+        EEPROM_READ(mks_park_pos);
+        EEPROM_READ(mks_min_extrusion_temp);
       #endif
 
       //
@@ -2777,25 +2850,20 @@ void MarlinSettings::reset() {
   // Preheat parameters
   //
   #if PREHEAT_COUNT
+    #define _PITEM(N,T) PREHEAT_##N##_##T,
     #if HAS_HOTEND
-      constexpr uint16_t hpre[] = ARRAY_N(PREHEAT_COUNT, PREHEAT_1_TEMP_HOTEND, PREHEAT_2_TEMP_HOTEND, PREHEAT_3_TEMP_HOTEND, PREHEAT_4_TEMP_HOTEND, PREHEAT_5_TEMP_HOTEND);
+      constexpr uint16_t hpre[] = { REPEAT2_S(1, INCREMENT(PREHEAT_COUNT), _PITEM, TEMP_HOTEND) };
     #endif
     #if HAS_HEATED_BED
-      constexpr uint16_t bpre[] = ARRAY_N(PREHEAT_COUNT, PREHEAT_1_TEMP_BED, PREHEAT_2_TEMP_BED, PREHEAT_3_TEMP_BED, PREHEAT_4_TEMP_BED, PREHEAT_5_TEMP_BED);
+      constexpr uint16_t bpre[] = { REPEAT2_S(1, INCREMENT(PREHEAT_COUNT), _PITEM, TEMP_BED) };
     #endif
     #if HAS_FAN
-      constexpr uint8_t fpre[] = ARRAY_N(PREHEAT_COUNT, PREHEAT_1_FAN_SPEED, PREHEAT_2_FAN_SPEED, PREHEAT_3_FAN_SPEED, PREHEAT_4_FAN_SPEED, PREHEAT_5_FAN_SPEED);
+      constexpr uint8_t fpre[] = { REPEAT2_S(1, INCREMENT(PREHEAT_COUNT), _PITEM, FAN_SPEED) };
     #endif
     LOOP_L_N(i, PREHEAT_COUNT) {
-      #if HAS_HOTEND
-        ui.material_preset[i].hotend_temp = hpre[i];
-      #endif
-      #if HAS_HEATED_BED
-        ui.material_preset[i].bed_temp = bpre[i];
-      #endif
-      #if HAS_FAN
-        ui.material_preset[i].fan_speed = fpre[i];
-      #endif
+      TERN_(HAS_HOTEND,     ui.material_preset[i].hotend_temp = hpre[i]);
+      TERN_(HAS_HEATED_BED, ui.material_preset[i].bed_temp = bpre[i]);
+      TERN_(HAS_FAN,        ui.material_preset[i].fan_speed = fpre[i]);
     }
   #endif
 
@@ -3004,6 +3072,11 @@ void MarlinSettings::reset() {
       password.is_set = false;
     #endif
   #endif
+
+  //
+  // MKS UI controller
+  //
+  TERN_(DGUS_LCD_UI_MKS, MKS_reset_settings());
 
   postprocess();
 

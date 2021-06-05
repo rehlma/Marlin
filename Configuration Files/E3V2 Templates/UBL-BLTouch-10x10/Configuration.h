@@ -1056,7 +1056,7 @@
  *     |    [-]    |
  *     O-- FRONT --+
  */
-#define NOZZLE_TO_PROBE_OFFSET { -10, -10, 0 }
+#define NOZZLE_TO_PROBE_OFFSET { -44, -7, 0 }
 
 // Most probes should stay away from the edges of the bed, but
 // with NOZZLE_AS_PROBE this can be negative for a wider probing area.
@@ -1648,7 +1648,7 @@
  */
 #define EEPROM_SETTINGS       // Persistent storage with M500 and M501
 //#define DISABLE_M503        // Saves ~2700 bytes of PROGMEM. Disable for release!
-//#define EEPROM_CHITCHAT     // Give feedback on EEPROM commands. Disable to save PROGMEM.
+#define EEPROM_CHITCHAT     // Give feedback on EEPROM commands. Disable to save PROGMEM.
 #define EEPROM_BOOT_SILENT    // Keep M503 quiet and only give errors during first load
 #if ENABLED(EEPROM_SETTINGS)
   #define EEPROM_AUTO_INIT    // Init EEPROM automatically on any errors.
@@ -1825,7 +1825,7 @@
  *
  * View the current statistics with M78.
  */
-//#define PRINTCOUNTER
+#define PRINTCOUNTER
 
 /**
  * Password
@@ -2371,18 +2371,6 @@
 //#define DWIN_CREALITY_TOUCHLCD
 
 //
-// Ender-3 v2 OEM display. A DWIN display with Rotary Encoder.
-//
-#define CREALITY_DWIN_EXTUI
-#if ENABLED(CREALITY_DWIN_EXTUI)
-  //
-  // Enable custom icons
-  // NB: Requires Ender-3 v2 OEM display firmware update, or you will get blank icons!
-  //
-  //#define CREALITY_DWIN_EXTUI_CUSTOM_ICONS
-#endif
-
-//
 // Touch-screen LCD for Malyan M200/M300 printers
 //
 //#define MALYAN_LCD
@@ -2418,7 +2406,7 @@
 // Third-party or vendor-customized controller interfaces.
 // Sources should be installed in 'src/lcd/extui'.
 //
-#define EXTENSIBLE_UI
+//#define EXTENSIBLE_UI
 
 #if ENABLED(EXTENSIBLE_UI)
   #define EXTUI_LOCAL_BEEPER // Enables use of local Beeper pin with external display
@@ -2548,7 +2536,14 @@
 //
 // Ender-3 v2 OEM display. A DWIN display with Rotary Encoder.
 //
-//#define DWIN_CREALITY_LCD
+#define DWIN_CREALITY_LCD
+#if ENABLED(DWIN_CREALITY_LCD)
+  //
+  // Enable custom icons
+  // Requires Ender-3 v2 OEM display firmware update, or you will get blank icons!
+  //
+  //#define DWIN_CREALITY_LCD_CUSTOM_ICONS
+#endif
 
 //
 // ADS7843/XPT2046 ADC Touchscreen such as ILI9341 2.8
