@@ -36,8 +36,8 @@ enum processID : uint8_t {
 };
 
 enum PopupID : uint8_t {
-  Pause, Stop, Resume, SaveLevel, ETemp, ConfFilChange, PurgeMore,
-  Level, Home, MoveWait, Heating,  FilLoad, FilChange, TempWarn, Runout, PIDWait, Resuming,
+  Pause, Stop, Resume, SaveLevel, ETemp, ConfFilChange, PurgeMore, MeshSlot,
+  Level, Home, MoveWait, Heating,  FilLoad, FilChange, TempWarn, Runout, PIDWait, Resuming, ManualProbing,
   FilInsert, HeaterTime, UserInput, LevelError, InvalidMesh, UI, Complete
 };
 
@@ -263,6 +263,8 @@ enum colorID : uint8_t {
 #define BarFill_Color       0x10E4  // Fill color of progress bar
 #define Select_Color        0x33BB  // Selected color
 #define Check_Color         0x4E5C  // Check-box check color
+#define Confirm_Color   	  0x34B9
+#define Cancel_Color        0x3186
 
 class CrealityDWINClass {
 
@@ -274,6 +276,7 @@ public:
     #if ENABLED(AUTO_BED_LEVELING_UBL)
       uint8_t tilt_grid_size : 3;
     #endif
+    uint16_t corner_pos : 10;
     uint8_t cursor_color : 4;
     uint8_t menu_split_line : 4;
     uint8_t menu_top_bg : 4;
@@ -361,6 +364,7 @@ public:
   void AudioFeedback(const bool success=true);
   void Save_Settings(char *buff);
   void Load_Settings(const char *buff);
+  void Reset_Settings();
 
 };
 
