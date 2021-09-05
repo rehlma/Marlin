@@ -1167,7 +1167,7 @@
  *     |    [-]    |
  *     O-- FRONT --+
  */
-#define NOZZLE_TO_PROBE_OFFSET { -38, 6, -1.36 }
+#define NOZZLE_TO_PROBE_OFFSET { -38, 6, -2.56 }
 
 // Most probes should stay away from the edges of the bed, but
 // with NOZZLE_AS_PROBE this can be negative for a wider probing area.
@@ -1357,8 +1357,8 @@
 // @section machine
 
 // The size of the print bed
-#define X_BED_SIZE 220 // Maybe 230
-#define Y_BED_SIZE 220 // Maybe 230
+#define X_BED_SIZE 220
+#define Y_BED_SIZE 220
 
 // Travel limits (mm) after homing, corresponding to endstop positions.
 #define X_MIN_POS 0
@@ -1847,8 +1847,8 @@
 #define PREHEAT_1_FAN_SPEED    50 // Value from 0 to 255
 
 #define PREHEAT_2_LABEL       "PLA"
-#define PREHEAT_2_TEMP_HOTEND 190
-#define PREHEAT_2_TEMP_BED     55
+#define PREHEAT_2_TEMP_HOTEND 210
+#define PREHEAT_2_TEMP_BED     50
 #define PREHEAT_2_FAN_SPEED    50 // Value from 0 to 255
 
 #define PREHEAT_3_LABEL       "ABS"
@@ -1858,7 +1858,7 @@
 
 #define PREHEAT_4_LABEL       "PETG"
 #define PREHEAT_4_TEMP_HOTEND 240
-#define PREHEAT_4_TEMP_BED     70
+#define PREHEAT_4_TEMP_BED     60
 #define PREHEAT_4_FAN_SPEED    50 // Value from 0 to 255
 
 /**
